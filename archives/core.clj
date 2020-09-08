@@ -16,8 +16,10 @@
       :out-chan-map out-chan-map}))
 
 (defn give!! [archive v]
-  (go
-    (>!! (archive :in-chan) v)))
+  (>!! (archive :in-chan) v)))
 
 (defn retrieve!! [archive category]
-  (<!! ((archive :out-chan-map) category)))
+  (let [
+         t (thread
+             (<!! ((archive :out-chan-map) category)))]
+    (<!! t)))
