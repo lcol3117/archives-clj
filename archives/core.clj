@@ -7,10 +7,9 @@
   (do
     (def in-chan (apply chan in-chan-args))
     (def out-chan (apply chan out-chan-args))
-    (let [flow-map flow-map-given]
-      (go-loop [_ nil]
-        ; run archive process
-        (recur nil)))
+    (go-loop [_ nil]
+      ; run archive process
+      (recur nil))
     {
       :in-chan in-chan
       :out-chan out-chan}))
