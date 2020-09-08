@@ -7,7 +7,7 @@
   (do
     (def in-chan (apply chan in-chan-args))
     (def out-chan-map (into (hash-map)
-      (map (fn [[k _]] [k (apply chan out-chan-args)]) (assoc flow-map :else #(true)))))
+      (map (fn [[key_ _]] [key_ (apply chan out-chan-args)]) (assoc flow-map :else #(true)))))
     (go-loop [_ nil]
       ; run archive process
       (recur nil))
@@ -20,5 +20,4 @@
     (>!! (archive :in-chan) v)))
 
 (defn retrieve!! [archive category]
-  (go
-    ; more work to do yay
+  (<!! ((archive :out-chan-map) category)))
