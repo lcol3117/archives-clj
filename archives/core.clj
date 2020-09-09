@@ -17,7 +17,8 @@
 (defn give!! [archive v]
   (>!! (archive :in-chan) {
                             :task :store
-                            :data v}))
+                            :data v
+                            :return-chan nil}))
 
 (defn retrieve!! [archive category]
   (do
@@ -26,6 +27,7 @@
            t (thread
             (>!! (archive :in-chan) {
                                       :task :locate
-                                      :data category})
+                                      :data category
+                                      :return-chan c-pass-chan})
             (<!! (archive :out-chan)))]
       (<!! t))))
