@@ -12,14 +12,14 @@
     (do
       (def in-chan (apply chan in-chan-args))
       (def pass-chan (apply chan pass-chan-args))
-      (a/go-loop [curr-archive []]
+      (go (loop [curr-archive []]
         (def new-given (<! in-chan))
         (def novelty
           (if (= (new-given :task) :store)
             (new-given :data)))
         (if (= (new-given :task) :retrieve)
           (>! (new-given :data) curr-archive))
-        (if novelty (recur (conj curr-archive novelty)) (recur curr-archive)))
+        (if novelty (recur (conj curr-archive novelty)) (recur curr-archive))))
       {
         :in-chan in-chan
         :pass-chan pass-chan})))
