@@ -14,20 +14,18 @@
       :in-chan in-chan
       :pass-chan pass-chan}))
 
-(defn give!! [archive v]
+(defn >>!! [archive v]
   (>!! (archive :in-chan) {
                             :task :store
-                            :data v
-                            :return-chan nil}))
+                            :data v}))
 
-(defn retrieve!! [archive category]
+(defn <<!! [archive category]
   (do
     (def c-pass-chan (chan 1))
     (let [
            t (thread
             (>!! (archive :in-chan) {
-                                      :task :locate
-                                      :data category
-                                      :return-chan c-pass-chan})
+                                      :task :retrieve
+                                      :data c-pass-chan})
             (<!! (archive :out-chan)))]
       (<!! t))))
