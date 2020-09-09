@@ -1,6 +1,6 @@
 (ns archives.test
-  (:require archives.core :as archv
-    :refer [>>!! <<!! archive]))
+  (:require [archives.core :as archv
+    :refer [>>!! <<!! archive]]))
 
 (def my-archive (archive [] []))
 
