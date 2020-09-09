@@ -3,21 +3,26 @@
     :as a
     :refer [>! <! >!! <!! go chan thread]]))
 
-(defn archive [in-chan-args pass-chan-args flow-map-given]
-  (do
-    (def in-chan (apply chan in-chan-args))
-    (def pass-chan (apply chan pass-chan-args))
-    (a/go-loop [curr-archive []]
-      (def new-given (<! in-chan))
-      (def novelty
-        (if (= (new-given :task) :store)
-          (new-given :data)))
-      (if (= (new-given :task) :retrieve)
-        (>! (new-given :data) curr-archive))
-      (if novelty (recur (conj curr-archive novelty)) (recur curr-archive)))
-    {
-      :in-chan in-chan
-      :pass-chan pass-chan}))
+(defn archive
+  ([]
+    (archive [] []))
+  ([chan-args]
+    (archive chan-args chan-args))
+  ([in-chan-args pass-chan-args]
+    (do
+      (def in-chan (apply chan in-chan-args))
+      (def pass-chan (apply chan pass-chan-args))
+      (a/go-loop [curr-archive []]
+        (def new-given (<! in-chan))
+        (def novelty
+          (if (= (new-given :task) :store)
+            (new-given :data)))
+        (if (= (new-given :task) :retrieve)
+          (>! (new-given :data) curr-archive))
+        (if novelty (recur (conj curr-archive novelty)) (recur curr-archive)))
+      {
+        :in-chan in-chan
+        :pass-chan pass-chan})))
 
 (defn >>!! [archive v]
   (>!! (archive :in-chan) {
@@ -37,7 +42,7 @@
 
 (defn test-archive []
   (do
-    (def my-archive (archive [] []))
+    (def my-archive (archive))
     (>>!! my-archive :first)
     (>>!! my-archive :second)
     (<<!! my-archive)
