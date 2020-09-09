@@ -1,7 +1,7 @@
 (ns archives.core
   (:require [clojure.core.async
     :as a
-    :refer [>! <! >!! <!! go chan thread]]))
+    :refer [>!! <!! chan thread]]))
 
 (defn archive
   ([]
@@ -12,14 +12,15 @@
     (do
       (def in-chan (apply chan in-chan-args))
       (def pass-chan (apply chan pass-chan-args))
-      (go (loop [curr-archive []]
-        (def new-given (<! in-chan))
-        (def novelty
-          (if (= (new-given :task) :store)
-            (new-given :data)))
-        (if (= (new-given :task) :retrieve)
-          (>! (new-given :data) curr-archive))
-        (if novelty (recur (conj curr-archive novelty)) (recur curr-archive))))
+      (thread
+        (loop [curr-archive []]
+          (def new-given (<!! in-chan))
+          (def novelty
+            (if (= (new-given :task) :store)
+              (new-given :data)))
+          (if (= (new-given :task) :retrieve)
+            (>!! (new-given :data) curr-archive))
+          (if novelty (recur (conj curr-archive novelty)) (recur curr-archive))))
       {
         :in-chan in-chan
         :pass-chan pass-chan})))
