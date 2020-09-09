@@ -7,7 +7,7 @@
   (do
     (def in-chan (apply chan in-chan-args))
     (def pass-chan (apply chan pass-chan-args))
-    (go-loop [curr-archive []]
+    (a/go-loop [curr-archive []]
       (def new-given (<! in-chan))
       (def novelty
         (if (= (new-given :task) :store)
