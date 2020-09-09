@@ -5,7 +5,8 @@
 
 (defn archive
   ([]
-    (archive [] []))
+    ;(archive [] []))
+   (/ 0 0))
   ([chan-args]
     (archive chan-args chan-args))
   ([in-chan-args pass-chan-args]
