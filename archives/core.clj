@@ -32,5 +32,5 @@
             (>!! (archive :in-chan) {
                                       :task :retrieve
                                       :data c-pass-chan})
-            (<!! (archive :out-chan)))]
+            (<!! c-pass-chan))]
       (<!! t))))
