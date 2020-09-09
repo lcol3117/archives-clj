@@ -30,7 +30,7 @@
                             :task :store
                             :data v}))
 
-(defn <<!! [archive category]
+(defn <<!! [archive]
   (do
     (def c-pass-chan (chan 1))
     (let [
