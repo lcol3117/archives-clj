@@ -34,3 +34,13 @@
                                       :data c-pass-chan})
             (<!! c-pass-chan))]
       (<!! t))))
+
+(defn test-archive []
+  (do
+    (def my-archive (archive [] []))
+    (>>!! my-archive :first)
+    (>>!! my-archive :second)
+    (<<!! my-archive)
+    (assert (= (<<!! my-archive) [:first :second]))))
+
+(test-archive)
