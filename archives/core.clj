@@ -3,16 +3,16 @@
     :as a
     :refer [>! <! >!! <!! go chan buffer close! thread alts! alts!! timeout]]))
 
-(defn archive [in-chan-args out-chan-args flow-map-given]
+(defn archive [in-chan-args pass-chan-args flow-map-given]
   (do
     (def in-chan (apply chan in-chan-args))
-    (def out-chan (apply chan out-chan-args))
+    (def pass-chan (apply chan pass-chan-args))
     (go-loop [_ nil]
       ; run archive process
       (recur nil))
     {
       :in-chan in-chan
-      :out-chan out-chan}))
+      :pass-chan pass-chan}))
 
 (defn give!! [archive v]
   (>!! (archive :in-chan) {
@@ -20,10 +20,12 @@
                             :data v}))
 
 (defn retrieve!! [archive category]
-  (let [
-         t (thread
-          (>!! (archive :in-chan) {
-                                    :task :locate
-                                    :data category})
-          (<!! (archive :out-chan)))]
-    (<!! t)))
+  (do
+    (def c-pass-chan (chan 1))
+    (let [
+           t (thread
+            (>!! (archive :in-chan) {
+                                      :task :locate
+                                      :data category})
+            (<!! (archive :out-chan)))]
+      (<!! t))))
